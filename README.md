@@ -59,7 +59,7 @@ streamlit run app.py
 
 ## 📂 Project Structure
 ```
-├── app.py             # Streamlit frontend
+├── app.py              # Streamlit frontend
 ├── requirements.txt    # Dependencies
 ├── .env.example        # Example environment file
 └── audio_generations/  # Generated podcasts
