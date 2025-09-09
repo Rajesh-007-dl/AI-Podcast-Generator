@@ -1,42 +1,34 @@
 import os
 from uuid import uuid4
-from agno.agent import Agent
+from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
 from agno.tools.eleven_labs import ElevenLabsTools
 from agno.tools.firecrawl import FirecrawlTools
-from agno.agent import Agent, RunResponse
 from agno.utils.audio import write_audio_to_file
 from agno.utils.log import logger
 import streamlit as st
+from dotenv import load_dotenv
+load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
+elevenlabs_api_key = os.getenv("ELEVEN_LABS_API_KEY")
+firecrawl_api_key = os.getenv("FIRECRAWL_API_KEY")
 
-# Streamlit Page Setup
 st.set_page_config(page_title="📰 ➡️ 🎙️ Blog to Podcast Agent", page_icon="🎙️")
 st.title("📰 ➡️ 🎙️ Blog to Podcast Agent")
 
-# Sidebar: API Keys
-st.sidebar.header("🔑 API Keys")
-
-openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
-elevenlabs_api_key = st.sidebar.text_input("ElevenLabs API Key", type="password")
-firecrawl_api_key = st.sidebar.text_input("Firecrawl API Key", type="password")
-
-# Check if all keys are provided
 keys_provided = all([openai_api_key, elevenlabs_api_key, firecrawl_api_key])
 
-# Input: Blog URL
+if not keys_provided:
+    st.warning("⚠️ Missing API keys in .env file. Please add them before running.")
+
 url = st.text_input("Enter the Blog URL:", "")
 
-# Button: Generate Podcast
 generate_button = st.button("🎙️ Generate Podcast", disabled=not keys_provided)
-
-if not keys_provided:
-    st.warning("Please enter all required API keys to enable podcast generation.")
 
 if generate_button:
     if url.strip() == "":
         st.warning("Please enter a blog URL first.")
     else:
-        # Set API keys as environment variables for Agno and Tools
         os.environ["OPENAI_API_KEY"] = openai_api_key
         os.environ["ELEVEN_LABS_API_KEY"] = elevenlabs_api_key
         os.environ["FIRECRAWL_API_KEY"] = firecrawl_api_key
